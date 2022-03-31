@@ -70,6 +70,9 @@ do
     assert_func(parse, "(xyz)", "(xy)z")
     assert_func(parse, "xyz", "(xy)z")
     assert_func(parse, "^x.xyz", "^x.((xy)z)")
+    assert_func(parse, "^x.xy z ^p.q u", "^x.(((xy)z)(^p.(qu)))")
+
+    assert_func(parse, "^xyz.zyx", "^x.(^y.(^z.((zy)x)))")
 
     assert_func(parse, "(^xy.yx) qp", "((^x.(^y.(yx)))q)p")
     assert_func(parse, "^x.xz^y.yxz", "^x.((xz)(^y.((yx)z)))")
@@ -117,6 +120,8 @@ do
     assert_func(run, "(^x.^y.x) y", "^y0.y")
 
     assert_func(run, "(^x.x^y.yx) (vw)", "(vw)(^y.(y(vw)))")
+
+    assert_func(run, "(^yx.yzx) x", "^x0.((xz)x0)")
 end
 
 

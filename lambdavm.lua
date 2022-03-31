@@ -41,9 +41,9 @@ function LambdaVM:runString(text, origin)
 end
 
 function LambdaVM:onError(error)
-    print("Failed.")
-    print("----------")
-    print(error)
+    -- print("Failed.")
+    -- print("----------")
+    -- print(error)
     return error
 end
 
