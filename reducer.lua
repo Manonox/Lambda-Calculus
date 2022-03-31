@@ -117,7 +117,9 @@ local function substitute(in_exp, what_var, for_exp)
     if in_exp.class == ApplicationNode then
         -- 3.
         in_exp.left = substitute(in_exp.left, what_var, for_exp)
+        in_exp.left.parent = in_exp
         in_exp.right = substitute(in_exp.right, what_var, for_exp)
+        in_exp.right.parent = in_exp
         return in_exp
     end
 
@@ -141,6 +143,7 @@ local function substitute(in_exp, what_var, for_exp)
     if not fvN[variable.name] then
         -- 6.
         in_exp.exp = substitute(in_exp.exp, what_var, for_exp)
+        in_exp.exp.parent = in_exp
         return in_exp
     end
 
@@ -152,7 +155,11 @@ local function substitute(in_exp, what_var, for_exp)
     end
 
     in_exp.var = VariableNode(new_var_name)
-    in_exp.exp = substitute(substitute(in_exp.exp, variable.name, in_exp.var), what_var, for_exp)
+    in_exp.var.parent = in_exp
+    in_exp.exp = substitute(in_exp.exp, variable.name, in_exp.var)
+    in_exp.exp.parent = in_exp
+    in_exp.exp = substitute(in_exp.exp, what_var, for_exp)
+    in_exp.exp.parent = in_exp
 
     return in_exp
 end
@@ -160,10 +167,10 @@ end
 
 function Reducer:step()
     local node = self:findRedex()
+    --node:treePrint()
     if not node then return false end
 
-    local result = substitute(node.left.exp, node.left.var.name, node.right)
-
+    local result = substitute(node.left.exp:deepcopy(), node.left.var.name, node.right:deepcopy())
 
     if not node.parent then
         self.ast = result

@@ -35,6 +35,7 @@ function LambdaVM:runString(text, origin)
     local modified
     repeat
         modified = reducer:step()
+        if self.show_steps then print(reducer.ast) end
     until not modified
 
     return reducer.ast
