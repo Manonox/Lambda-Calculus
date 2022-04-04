@@ -13,7 +13,7 @@ while true do
     if r.class:isSubclassOf(Error) then
         print(tostring(r))
     else
-        print("Normal form: " .. tostring(r))
+        print("Normal form: " .. r:toprettytext())
     end
 end
 

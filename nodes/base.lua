@@ -13,5 +13,9 @@ function Node:treePrint(depth)
     print(string.rep("\t", depth) .. self:treeText())
 end
 
+function Node:toprettytext()
+    return tostring(self)
+end
+
 return Node
 

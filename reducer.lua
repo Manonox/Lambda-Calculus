@@ -107,11 +107,8 @@ local function substitute(in_exp, what_var, for_exp)
     if in_exp.class == VariableNode then
         -- 2.
         if in_exp.name ~= what_var then
-            print(2, in_exp, what_var, for_exp)
             return in_exp
         end
-
-        print(1, in_exp, what_var, for_exp)
         -- 1.
         return for_exp:deepcopy()
     end
@@ -145,6 +142,7 @@ local function substitute(in_exp, what_var, for_exp)
     if not fvN[variable.name] then
         -- 6.
         in_exp.exp = substitute(in_exp.exp, what_var, for_exp)
+        in_exp.var.parent = in_exp
         in_exp.exp.parent = in_exp
         return in_exp
     end
@@ -167,13 +165,40 @@ local function substitute(in_exp, what_var, for_exp)
 end
 
 
+function Reducer:checkStructure(root)
+    root = root or self.ast
+
+    if root == self.ast then
+        assert(root.parent == nil, "Root's parent is not NIL")
+    end
+
+    if root.class == VariableNode then
+        return
+    end
+
+    local text = " [Node: " .. root:toprettytext() .. "]"
+
+    if root.class == AbstractionNode then
+        assert(root.var.parent == root, "Abstraction's variable parent is wrong." .. text)
+        assert(root.exp.parent == root, "Abstraction's expression parent is wrong." .. text)
+        self:checkStructure(root.exp)
+    end
+
+    if root.class == ApplicationNode then
+        assert(root.left.parent == root, "Application's left expression parent is wrong." .. text)
+        self:checkStructure(root.left)
+        assert(root.right.parent == root, "Application's right expression parent is wrong." .. text)
+        self:checkStructure(root.right)
+    end
+end
+
+
 function Reducer:step()
     local node = self:findRedex()
     --node:treePrint()
     if not node then return false end
 
     local result = substitute(node.left.exp:deepcopy(), node.left.var.name, node.right:deepcopy())
-    print(result)
 
     if not node.parent then
         self.ast = result
@@ -192,6 +217,8 @@ function Reducer:step()
             node.parent.right = result
         end
     end
+
+    -- self.ast:treePrint() self:checkStructure()
 
     return true
 end

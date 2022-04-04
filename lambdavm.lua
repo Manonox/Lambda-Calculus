@@ -31,11 +31,19 @@ function LambdaVM:runString(text, origin)
     local ast = result.node
 
     local reducer = Reducer(ast)
+    reducer:checkStructure()
+
+    local redex = reducer:findRedex()
+    print(reducer.ast:toprettytext(0, redex))
+
 
     local modified
     repeat
         modified = reducer:step()
-        if self.show_steps then print(reducer.ast) end
+        if self.show_steps and modified then
+            local redex = reducer:findRedex()
+            print(reducer.ast:toprettytext(0, redex))
+        end
     until not modified
 
     return reducer.ast
