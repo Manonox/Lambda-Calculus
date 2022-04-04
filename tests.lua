@@ -35,7 +35,7 @@ local fail_state = false
 local function assert_func(func, s_in, s_out)
     local result = func(s_in)
     local success = s_out == result
-    local symb = success and "v" or "x"
+    local symb = success and "\27[32mv\27[0m" or "\27[31mx\27[0m"
 
     print("[" .. symb .. "] | Result: " .. result .. (success and "" or (" | Must be: " .. s_out)))
 end
