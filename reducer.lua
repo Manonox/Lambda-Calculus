@@ -107,9 +107,11 @@ local function substitute(in_exp, what_var, for_exp)
     if in_exp.class == VariableNode then
         -- 2.
         if in_exp.name ~= what_var then
+            print(2, in_exp, what_var, for_exp)
             return in_exp
         end
 
+        print(1, in_exp, what_var, for_exp)
         -- 1.
         return for_exp:deepcopy()
     end
@@ -171,6 +173,7 @@ function Reducer:step()
     if not node then return false end
 
     local result = substitute(node.left.exp:deepcopy(), node.left.var.name, node.right:deepcopy())
+    print(result)
 
     if not node.parent then
         self.ast = result
@@ -178,7 +181,7 @@ function Reducer:step()
         return true
     end
 
-    result.parent = node
+    result.parent = node.parent
 
     if node.parent.class == AbstractionNode then
         node.parent.exp = result
