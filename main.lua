@@ -8,6 +8,7 @@ local lvm = LambdaVM()
 while true do
     io.write("> ")
     local inp = io.read()
+    lvm.loopback = true
     lvm.show_steps = true
     local r = lvm:runString(inp)
     if r.class:isSubclassOf(Error) then

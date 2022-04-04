@@ -5,6 +5,7 @@ local LambdaVM = require("lambdavm")
 
 local function run(s)
     local lvm = LambdaVM()
+    lvm.loopback = true
     return tostring(lvm:runString(s))
 end
 
@@ -125,6 +126,12 @@ do
     assert_func(run, "(^yx.yzx) x", "^x0.((xz)x0)")
 end
 
+test_print("TEST_EXTRA")
+do
+    print("2 * (if FALSE then 1 else 0) = 0")
+    print("MULT 2 (FALSE 1 0) = 0")
+    assert_func(run, "(^mnf.m(nf)) (^fx.f(fx)) ((^xy.y) (^fx.fx) (^fx.x))", "^f.(^x.x)")
+end
 
 test_print()
 

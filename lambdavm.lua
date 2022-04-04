@@ -9,7 +9,8 @@ local Reducer = require("reducer")
 local LambdaVM = class("LambdaVM")
 
 function LambdaVM:initialize()
-
+    self.show_steps = false
+    self.loopback = false
 end
 
 function LambdaVM:runString(text, origin)
@@ -33,8 +34,13 @@ function LambdaVM:runString(text, origin)
     local reducer = Reducer(ast)
     reducer:checkStructure()
 
-    local redex = reducer:findRedex()
-    print(reducer.ast:toprettytext(0, redex))
+    local redex
+    if self.loopback then
+        if self.show_steps then
+            redex = reducer:findRedex()
+        end
+        print(reducer.ast:toprettytext(0, redex))
+    end
 
 
     local modified
